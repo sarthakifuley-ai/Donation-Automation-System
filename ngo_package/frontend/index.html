@@ -1,0 +1,1437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>YUVA NGO — Donation Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --saffron: #E8651A;
+      --saffron-2: #F5924B;
+      --saffron-glow: rgba(232,101,26,0.14);
+      --green: #2E7D52;
+      --green-2: #43A972;
+      --green-glow: rgba(46,125,82,0.12);
+      --ink: #16120D;
+      --ink-2: #4A3F35;
+      --muted: #8A7B6E;
+      --border: rgba(0,0,0,0.07);
+      --cream: #FDFAF6;
+      --white: #FFFFFF;
+      --card-bg: #FFFFFF;
+      --input-bg: #FAF7F3;
+      --shadow-sm: 0 1px 4px rgba(22,18,13,0.06), 0 4px 16px rgba(22,18,13,0.04);
+      --shadow-md: 0 2px 8px rgba(22,18,13,0.06), 0 8px 32px rgba(22,18,13,0.08);
+      --shadow-lg: 0 8px 24px rgba(22,18,13,0.08), 0 24px 64px rgba(22,18,13,0.12);
+      --radius: 16px;
+      --radius-sm: 10px;
+      --dark: #0D0A06;
+      --dark-2: #1A1209;
+      --dark-3: #231809;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: var(--cream);
+      color: var(--ink);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ═══════════════════════════════════════════
+       AUTH SCREEN
+    ═══════════════════════════════════════════ */
+    #auth-screen {
+      min-height: 100vh;
+      display: flex;
+      align-items: stretch;
+    }
+
+    .auth-left {
+      flex: 1;
+      background: var(--dark);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 60px;
+    }
+
+    .auth-left-pattern {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 600px 400px at 20% 30%, rgba(232,101,26,0.08) 0%, transparent 60%),
+        radial-gradient(ellipse 400px 600px at 80% 70%, rgba(46,125,82,0.06) 0%, transparent 60%);
+    }
+
+    .auth-left-grid {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+      background-size: 40px 40px;
+    }
+
+    .auth-left-content { position: relative; z-index: 2; }
+
+    .auth-brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 56px;
+    }
+    .auth-brand-logos {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .auth-brand-logos img {
+      height: 40px;
+      width: 40px;
+      object-fit: contain;
+      border-radius: 10px;
+      background: rgba(255,255,255,0.08);
+      padding: 5px;
+    }
+    .auth-brand-divider { width: 1px; height: 24px; background: rgba(255,255,255,0.12); }
+    .auth-brand-name strong { display: block; font-size: 0.95rem; font-weight: 700; color: white; }
+    .auth-brand-name span { font-size: 0.68rem; color: var(--saffron-2); letter-spacing: 0.1em; text-transform: uppercase; }
+
+    .auth-headline {
+      font-family: 'Playfair Display', serif;
+      font-size: 3.2rem;
+      font-weight: 700;
+      color: white;
+      line-height: 1.1;
+      margin-bottom: 20px;
+      letter-spacing: -0.02em;
+    }
+    .auth-headline em { font-style: normal; color: var(--saffron-2); }
+
+    .auth-tagline {
+      font-size: 0.9rem;
+      color: rgba(255,255,255,0.38);
+      line-height: 1.7;
+      max-width: 340px;
+      margin-bottom: 48px;
+      font-weight: 300;
+    }
+
+    .auth-stats {
+      display: flex;
+      gap: 32px;
+    }
+    .auth-stat-item strong {
+      display: block;
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem;
+      color: var(--saffron-2);
+      font-weight: 700;
+    }
+    .auth-stat-item span {
+      font-size: 0.72rem;
+      color: rgba(255,255,255,0.3);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .auth-right {
+      width: 480px;
+      flex-shrink: 0;
+      background: var(--white);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 48px 52px;
+    }
+
+    .auth-form-wrap { width: 100%; }
+
+    .auth-form-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.9rem;
+      font-weight: 700;
+      color: var(--ink);
+      margin-bottom: 6px;
+    }
+    .auth-form-sub { font-size: 0.82rem; color: var(--muted); margin-bottom: 32px; font-weight: 400; }
+
+    .auth-tabs {
+      display: flex;
+      gap: 0;
+      background: var(--input-bg);
+      border-radius: 12px;
+      padding: 4px;
+      margin-bottom: 28px;
+      border: 1px solid var(--border);
+    }
+    .auth-tab {
+      flex: 1;
+      padding: 10px;
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.84rem;
+      font-weight: 600;
+      border-radius: 9px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .auth-tab.active {
+      background: white;
+      color: var(--ink);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+
+    .auth-field { margin-bottom: 16px; }
+    .auth-field label {
+      display: block;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: var(--ink-2);
+      margin-bottom: 7px;
+    }
+    .auth-field input {
+      width: 100%;
+      padding: 12px 16px;
+      background: var(--input-bg);
+      border: 1.5px solid transparent;
+      border-radius: var(--radius-sm);
+      color: var(--ink);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.9rem;
+      outline: none;
+      transition: all 0.2s;
+      margin: 0;
+      display: block;
+    }
+    .auth-field input::placeholder { color: #C5BAB0; }
+    .auth-field input:focus {
+      border-color: var(--saffron);
+      background: white;
+      box-shadow: 0 0 0 3px var(--saffron-glow);
+    }
+
+    .auth-btn {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, var(--saffron), var(--saffron-2));
+      border: none;
+      border-radius: var(--radius-sm);
+      color: white;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.92rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: all 0.2s;
+      box-shadow: 0 4px 16px rgba(232,101,26,0.32);
+      letter-spacing: 0.01em;
+    }
+    .auth-btn:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(232,101,26,0.42); }
+    .auth-btn:active { transform: translateY(0); }
+    .auth-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+    .auth-error {
+      background: #FEF2F2;
+      border: 1px solid #FECACA;
+      border-radius: 9px;
+      padding: 11px 14px;
+      color: #B91C1C;
+      font-size: 0.82rem;
+      margin-bottom: 16px;
+      display: none;
+    }
+
+    /* ═══════════════════════════════════════════
+       DASHBOARD
+    ═══════════════════════════════════════════ */
+    #dashboard { display: none; }
+
+    .topbar {
+      background: var(--dark);
+      padding: 0 32px;
+      height: 58px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .topbar-brand {
+      display: flex; align-items: center; gap: 10px;
+    }
+    .topbar-brand img {
+      height: 30px; width: 30px;
+      object-fit: contain;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.07);
+      padding: 3px;
+    }
+    .topbar-brand span {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: white;
+      letter-spacing: -0.01em;
+    }
+    .topbar-spacer { flex: 1; }
+
+    .topbar-actions { display: flex; align-items: center; gap: 10px; }
+
+    .pill-btn {
+      display: flex; align-items: center; gap: 7px;
+      padding: 7px 14px;
+      border-radius: 20px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: 1.5px solid;
+    }
+    .pill-btn.danger {
+      background: rgba(220,38,38,0.08);
+      border-color: rgba(220,38,38,0.25);
+      color: #FCA5A5;
+    }
+    .pill-btn.danger:hover { background: rgba(220,38,38,0.18); border-color: rgba(220,38,38,0.45); }
+    .pill-btn.ghost {
+      background: transparent;
+      border-color: rgba(255,255,255,0.12);
+      color: rgba(255,255,255,0.5);
+    }
+    .pill-btn.ghost:hover { background: rgba(255,255,255,0.07); color: white; border-color: rgba(255,255,255,0.2); }
+
+    .topbar-user { display: flex; align-items: center; gap: 9px; }
+    .user-avatar {
+      width: 30px; height: 30px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--saffron), var(--saffron-2));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.75rem; font-weight: 800; color: white;
+    }
+    .topbar-user span { font-size: 0.8rem; color: rgba(255,255,255,0.5); }
+
+    /* ─── HERO STRIP ─── */
+    .hero-strip {
+      background: var(--dark);
+      padding: 40px 40px 60px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-strip::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 500px 300px at 70% 50%, rgba(232,101,26,0.06) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-strip-inner {
+      position: relative; z-index: 2;
+      display: flex; align-items: center; gap: 32px; flex-wrap: wrap;
+    }
+    .hero-text { flex: 1; }
+    .hero-eyebrow {
+      font-size: 0.7rem; font-weight: 700;
+      color: var(--saffron-2);
+      letter-spacing: 0.14em; text-transform: uppercase;
+      margin-bottom: 10px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .hero-eyebrow::before {
+      content: '';
+      display: inline-block;
+      width: 20px; height: 2px;
+      background: var(--saffron-2);
+      border-radius: 2px;
+    }
+    .hero-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.4rem; font-weight: 700;
+      color: white; line-height: 1.1;
+      letter-spacing: -0.02em;
+      margin-bottom: 10px;
+    }
+    .hero-title em { font-style: normal; color: var(--saffron-2); }
+    .hero-subtitle { font-size: 0.84rem; color: rgba(255,255,255,0.35); font-weight: 300; }
+
+    .hero-quick-stats {
+      display: flex; gap: 20px; flex-wrap: wrap;
+    }
+    .hqs-item {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 14px;
+      padding: 18px 24px;
+      text-align: center;
+      min-width: 120px;
+    }
+    .hqs-value {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem; font-weight: 700;
+      color: var(--saffron-2);
+    }
+    .hqs-label { font-size: 0.68rem; color: rgba(255,255,255,0.3); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.07em; }
+
+    /* ─── WA BANNER ─── */
+    .wa-banner {
+      margin: 0 32px;
+      border-radius: 14px;
+      padding: 16px 22px;
+      display: flex; align-items: center; gap: 18px; flex-wrap: wrap;
+      position: relative; top: -24px;
+      box-shadow: var(--shadow-md);
+      border: 1px solid;
+    }
+    .wa-banner.connected { background: #F0FDF4; border-color: #BBF7D0; }
+    .wa-banner.disconnected { background: #FFF7ED; border-color: #FED7AA; }
+
+    .wa-badge {
+      width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0;
+    }
+    .wa-banner.connected .wa-badge { background: #DCFCE7; }
+    .wa-banner.disconnected .wa-badge { background: #FEF3C7; }
+
+    .wa-text { flex: 1; }
+    .wa-text strong { display: block; font-size: 0.88rem; font-weight: 700; color: var(--ink); margin-bottom: 2px; }
+    .wa-text span { font-size: 0.76rem; color: var(--muted); }
+
+    .wa-dot-anim { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; }
+    .wa-dot-anim.green { background: #22C55E; box-shadow: 0 0 0 3px rgba(34,197,94,0.2); animation: pulse 2s infinite; }
+    .wa-dot-anim.amber { background: var(--saffron); }
+
+    @keyframes pulse { 0%,100% { box-shadow: 0 0 0 2px rgba(34,197,94,0.2); } 50% { box-shadow: 0 0 0 6px rgba(34,197,94,0.05); } }
+
+    .wa-connect-btn {
+      padding: 10px 20px;
+      background: linear-gradient(135deg, #16A34A, #22C55E);
+      border: none; border-radius: 20px;
+      color: white; font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.82rem; font-weight: 700; cursor: pointer;
+      transition: all 0.2s; white-space: nowrap;
+      box-shadow: 0 3px 12px rgba(34,197,94,0.28);
+    }
+    .wa-connect-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(34,197,94,0.38); }
+
+    /* ─── MAIN CANVAS ─── */
+    .canvas {
+      background: var(--cream);
+      min-height: calc(100vh - 58px);
+      padding: 8px 32px 80px;
+    }
+
+    /* ─── SCHOOL SELECTOR BAR ─── */
+    .school-toolbar {
+      background: var(--white);
+      border-radius: var(--radius);
+      padding: 16px 20px;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 24px;
+      display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+    }
+    .toolbar-label {
+      font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--muted); white-space: nowrap;
+    }
+    .school-select-styled {
+      flex: 1; min-width: 200px; padding: 9px 14px;
+      border: 1.5px solid #EDE8E2; border-radius: 9px;
+      font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.86rem; color: var(--ink);
+      background: var(--input-bg); outline: none; cursor: pointer; transition: all 0.2s;
+    }
+    .school-select-styled:focus { border-color: var(--saffron); box-shadow: 0 0 0 3px var(--saffron-glow); background: white; }
+
+    .selected-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--saffron-glow); color: var(--saffron);
+      font-size: 0.72rem; font-weight: 700; padding: 5px 13px;
+      border-radius: 20px; white-space: nowrap;
+      border: 1px solid rgba(232,101,26,0.2);
+    }
+
+    .new-school-row { display: flex; align-items: center; gap: 8px; }
+    .new-school-input {
+      padding: 9px 14px; border: 1.5px solid #EDE8E2; border-radius: 9px;
+      font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.84rem; color: var(--ink);
+      background: var(--input-bg); outline: none; width: 190px; margin: 0; transition: all 0.2s;
+    }
+    .new-school-input:focus { border-color: var(--saffron); box-shadow: 0 0 0 3px var(--saffron-glow); background: white; }
+    .btn-add-school {
+      padding: 9px 16px; background: linear-gradient(135deg, var(--saffron), var(--saffron-2));
+      color: white; border: none; border-radius: 9px;
+      font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.8rem; font-weight: 700;
+      cursor: pointer; white-space: nowrap; transition: all 0.2s;
+      box-shadow: 0 3px 10px rgba(232,101,26,0.22);
+    }
+    .btn-add-school:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(232,101,26,0.32); }
+
+    /* ─── MAIN GRID ─── */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 18px;
+      margin-bottom: 18px;
+    }
+    .span-2 { grid-column: span 2; }
+    .span-3 { grid-column: span 3; }
+
+    /* ─── CARD ─── */
+    .card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+      padding: 24px 26px;
+      transition: box-shadow 0.25s, transform 0.25s;
+      animation: fadeUp 0.45s ease both;
+    }
+    .card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+    .card-header { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; }
+    .card-icon {
+      width: 36px; height: 36px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center; font-size: 16px;
+    }
+    .ci-green { background: #ECFDF5; }
+    .ci-saffron { background: #FFF7ED; }
+    .ci-blue { background: #EFF6FF; }
+    .ci-purple { background: #F5F3FF; }
+    .card-title { font-size: 0.95rem; font-weight: 700; color: var(--ink); }
+    .card-badge {
+      margin-left: auto; display: inline-flex; align-items: center; gap: 5px;
+      font-size: 0.68rem; font-weight: 700; padding: 3px 10px; border-radius: 20px;
+    }
+    .cb-green { background: #ECFDF5; color: #16A34A; }
+
+    /* ─── STAT CARDS ─── */
+    .stat-card {
+      border-radius: var(--radius);
+      padding: 24px 26px;
+      position: relative; overflow: hidden;
+      animation: fadeUp 0.45s ease both;
+    }
+    .stat-card.dark {
+      background: linear-gradient(135deg, var(--dark-2) 0%, var(--dark-3) 100%);
+      border: 1px solid rgba(255,255,255,0.06);
+      box-shadow: var(--shadow-md);
+    }
+    .stat-card.light {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+    }
+    .stat-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+    .stat-card.light:hover { box-shadow: var(--shadow-md); }
+
+    .stat-accent {
+      position: absolute; right: 20px; top: 50%; transform: translateY(-50%);
+      font-size: 3rem; opacity: 0.06; pointer-events: none;
+    }
+    .stat-label { font-size: 0.69rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+    .stat-card.dark .stat-label { color: rgba(255,255,255,0.35); }
+    .stat-value {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.4rem; font-weight: 700;
+      color: var(--saffron-2); line-height: 1;
+    }
+    .stat-card.light .stat-value { font-size: 1.7rem; color: var(--ink); }
+    .stat-footer { font-size: 0.72rem; color: rgba(255,255,255,0.25); margin-top: 10px; display: flex; align-items: center; gap: 6px; }
+    .stat-card.light .stat-footer { color: var(--muted); }
+    .live-indicator { display: flex; align-items: center; gap: 5px; }
+    .live-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green-2); animation: pulse 2s infinite; flex-shrink: 0; }
+
+    /* ─── FORM FIELDS ─── */
+    .field-group { margin-bottom: 14px; }
+    .field-label {
+      display: block; font-size: 0.69rem; font-weight: 700;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--ink-2); margin-bottom: 6px;
+    }
+    input[type="text"], input[type="tel"], input[type="number"], input[type="date"], input[type="password"], textarea, select {
+      width: 100%; padding: 10px 14px; border: 1.5px solid #EDE8E2; border-radius: 9px;
+      font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.85rem; color: var(--ink);
+      background: var(--input-bg); outline: none; margin-bottom: 0; display: block;
+      transition: all 0.2s;
+    }
+    input::placeholder, textarea::placeholder { color: #C8C0B8; }
+    input:focus, textarea:focus, select:focus {
+      border-color: var(--saffron); background: white; box-shadow: 0 0 0 3px var(--saffron-glow);
+    }
+    textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
+
+    .input-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0 14px; }
+    .full-col { grid-column: 1 / -1; }
+
+    .section-sep {
+      font-size: 0.67rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--muted); display: flex; align-items: center; gap: 10px;
+      margin: 6px 0 14px;
+    }
+    .section-sep::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+    /* ─── BUTTONS ─── */
+    .submit-btn {
+      width: 100%; padding: 13px 22px; border: none; border-radius: 10px;
+      font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.88rem; font-weight: 700;
+      cursor: pointer; transition: all 0.2s; letter-spacing: 0.01em;
+    }
+    .sb-saffron {
+      background: linear-gradient(135deg, var(--saffron), var(--saffron-2));
+      color: white; box-shadow: 0 4px 16px rgba(232,101,26,0.28);
+    }
+    .sb-saffron:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(232,101,26,0.38); }
+    .sb-green {
+      background: linear-gradient(135deg, var(--green), var(--green-2));
+      color: white; box-shadow: 0 4px 16px rgba(46,125,82,0.25);
+    }
+    .sb-green:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(46,125,82,0.35); }
+    .submit-btn:active { transform: translateY(0) !important; }
+    .submit-btn:disabled { opacity: 0.55; cursor: not-allowed; transform: none !important; box-shadow: none !important; }
+
+    /* ─── CHART ─── */
+    .chart-wrap { position: relative; width: 100%; height: 200px; }
+    .toggle-row { display: flex; gap: 5px; margin-left: auto; }
+    .tgl-btn {
+      padding: 5px 14px; border-radius: 20px;
+      border: 1.5px solid var(--border); background: transparent;
+      font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.72rem; font-weight: 600;
+      color: var(--muted); cursor: pointer; transition: all 0.2s; width: auto; margin: 0;
+    }
+    .tgl-btn.on { background: var(--saffron); border-color: var(--saffron); color: white; }
+
+    /* ─── RECENT TABLE ─── */
+    .table-wrap { overflow-x: auto; margin-top: 4px; }
+    .data-table { width: 100%; border-collapse: collapse; }
+    .data-table th {
+      font-size: 0.67rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--muted); text-align: left; padding: 8px 12px;
+      border-bottom: 1px solid var(--border); white-space: nowrap;
+    }
+    .data-table td { font-size: 0.82rem; color: var(--ink-2); padding: 10px 12px; border-bottom: 1px solid var(--border); }
+    .data-table tr:last-child td { border-bottom: none; }
+    .data-table tr:hover td { background: var(--cream); }
+    .amount-chip {
+      display: inline-flex; align-items: center; gap: 4px;
+      background: #FFF7ED; color: var(--saffron);
+      font-size: 0.76rem; font-weight: 700; padding: 3px 10px;
+      border-radius: 20px; white-space: nowrap;
+    }
+    .empty-state { text-align: center; padding: 28px; color: var(--muted); font-size: 0.82rem; }
+
+    /* ─── MODALS ─── */
+    .modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.5); backdrop-filter: blur(8px);
+      z-index: 1000; display: none; align-items: center; justify-content: center;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal-box {
+      background: var(--dark-2);
+      border: 1px solid rgba(232,101,26,0.2);
+      border-radius: 20px; padding: 36px; max-width: 400px; width: 90%;
+      text-align: center; box-shadow: 0 32px 80px rgba(0,0,0,0.55);
+      animation: popIn 0.28s cubic-bezier(0.34,1.56,0.64,1) both;
+    }
+    @keyframes popIn { from { opacity:0; transform:scale(0.88); } to { opacity:1; transform:scale(1); } }
+    .modal-box h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.4rem; color: white; margin-bottom: 10px;
+    }
+    .modal-box p { font-size: 0.8rem; color: rgba(255,255,255,0.38); margin-bottom: 24px; line-height: 1.65; }
+    .modal-actions { display: flex; gap: 10px; }
+    .modal-btn {
+      flex: 1; padding: 12px; border-radius: 10px;
+      font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.85rem; font-weight: 600;
+      cursor: pointer; transition: all 0.2s; border: none;
+    }
+    .mb-cancel { background: rgba(255,255,255,0.07); color: rgba(255,255,255,0.55); border: 1px solid rgba(255,255,255,0.1); }
+    .mb-cancel:hover { background: rgba(255,255,255,0.12); color: white; }
+    .mb-danger { background: linear-gradient(135deg, #DC2626, #EF4444); color: white; }
+    .mb-danger:hover { opacity: 0.9; }
+
+    /* QR modal */
+    .qr-image-wrap { background: white; border-radius: 14px; padding: 14px; display: inline-block; margin-bottom: 20px; }
+    .qr-image-wrap img { width: 220px; height: 220px; display: block; }
+    .qr-loading { color: rgba(255,255,255,0.38); font-size: 0.85rem; padding: 36px 0; }
+    .spin { width: 34px; height: 34px; border: 3px solid rgba(232,101,26,0.2); border-top-color: var(--saffron); border-radius: 50%; animation: rotate 0.8s linear infinite; margin: 0 auto 14px; }
+    @keyframes rotate { to { transform: rotate(360deg); } }
+    .qr-steps { text-align: left; background: rgba(255,255,255,0.04); border-radius: 9px; padding: 12px 16px; margin-bottom: 18px; }
+    .qr-steps p { color: rgba(255,255,255,0.45); font-size: 0.77rem; line-height: 1.9; margin: 0; }
+    .qr-steps b { color: var(--saffron-2); }
+    .qr-close-btn { width: 100%; padding: 11px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 9px; color: rgba(255,255,255,0.5); font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.84rem; cursor: pointer; transition: all 0.2s; }
+    .qr-close-btn:hover { background: rgba(255,255,255,0.12); color: white; }
+
+    /* ─── TOAST ─── */
+    .toast {
+      position: fixed; bottom: 24px; right: 24px;
+      background: var(--dark-2); border: 1px solid rgba(232,101,26,0.2);
+      border-radius: 12px; padding: 12px 18px; color: white; font-size: 0.84rem;
+      z-index: 9999; transform: translateY(80px); opacity: 0;
+      transition: all 0.32s cubic-bezier(0.34,1.56,0.64,1);
+      pointer-events: none; max-width: 320px;
+      box-shadow: var(--shadow-lg);
+    }
+    .toast.show { transform: translateY(0); opacity: 1; }
+    .toast.success { border-color: rgba(34,197,94,0.3); }
+    .toast.error { border-color: rgba(220,38,38,0.3); }
+
+    /* Progress bar for submission */
+    .progress-bar-wrap {
+      height: 3px; background: rgba(0,0,0,0.06); border-radius: 99px;
+      overflow: hidden; margin-bottom: 14px; display: none;
+    }
+    .progress-bar-fill {
+      height: 100%; width: 0%; background: linear-gradient(90deg, var(--saffron), var(--saffron-2));
+      border-radius: 99px; transition: width 0.4s ease;
+    }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 900px) {
+      .auth-left { display: none; }
+      .auth-right { width: 100%; }
+      .dashboard-grid { grid-template-columns: 1fr; }
+      .span-2, .span-3 { grid-column: 1; }
+      .canvas { padding: 8px 16px 60px; }
+      .topbar { padding: 0 16px; }
+      .hero-strip { padding: 28px 20px 44px; }
+      .wa-banner { margin: 0 16px; }
+      .input-row { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 640px) {
+      .hero-title { font-size: 1.8rem; }
+      .auth-form-wrap { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══ AUTH ═══ -->
+<div id="auth-screen">
+  <div class="auth-left">
+    <div class="auth-left-pattern"></div>
+    <div class="auth-left-grid"></div>
+    <div class="auth-left-content">
+      <div class="auth-brand">
+        <div class="auth-brand-logos">
+          <img src="YUVA logo.png" alt="YUVA" onerror="this.style.display='none'">
+          <div class="auth-brand-divider"></div>
+          <img src="roots_logo.png" alt="Roots" onerror="this.style.display='none'">
+        </div>
+        <div class="auth-brand-name">
+          <strong>YUVA Rural Association</strong>
+          <span>Staff Portal</span>
+        </div>
+      </div>
+
+      <div class="auth-headline">
+        Empowering<br><em>Children</em> to<br>Change the World
+      </div>
+      <p class="auth-tagline">
+        A secure portal to track donations, send WhatsApp thank-you messages, and empower your team to do more.
+      </p>
+
+      <div class="auth-stats">
+        <div class="auth-stat-item">
+          <strong>🌱</strong>
+          <span>Rural Impact</span>
+        </div>
+        <div class="auth-stat-item">
+          <strong>📱</strong>
+          <span>WhatsApp Ready</span>
+        </div>
+        <div class="auth-stat-item">
+          <strong>📊</strong>
+          <span>Live Analytics</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="auth-right">
+    <div class="auth-form-wrap">
+      <div class="auth-form-title">Welcome Back</div>
+      <div class="auth-form-sub">Sign in to access the donation management portal</div>
+
+      <div class="auth-tabs">
+        <button class="auth-tab active" onclick="switchTab('login')">Sign In</button>
+        <button class="auth-tab" onclick="switchTab('register')">Register</button>
+      </div>
+
+      <div id="auth-error" class="auth-error"></div>
+
+      <div id="login-form">
+        <div class="auth-field">
+          <label>Username</label>
+          <input type="text" id="login-user" placeholder="Enter your username" autocomplete="username">
+        </div>
+        <div class="auth-field">
+          <label>Password</label>
+          <input type="password" id="login-pass" placeholder="••••••••" autocomplete="current-password">
+        </div>
+        <button class="auth-btn" id="login-btn" onclick="doLogin()">Sign In →</button>
+      </div>
+
+      <div id="register-form" style="display:none;">
+        <div class="auth-field">
+          <label>Full Name</label>
+          <input type="text" id="reg-name" placeholder="Your full name">
+        </div>
+        <div class="auth-field">
+          <label>Username</label>
+          <input type="text" id="reg-user" placeholder="Choose a username" autocomplete="username">
+        </div>
+        <div class="auth-field">
+          <label>Password</label>
+          <input type="password" id="reg-pass" placeholder="Min 6 characters" autocomplete="new-password">
+        </div>
+        <button class="auth-btn" id="register-btn" onclick="doRegister()">Create Account →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ DASHBOARD ═══ -->
+<div id="dashboard">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="topbar-brand">
+      <img src="YUVA logo.png" alt="YUVA" onerror="this.style.display='none'">
+      <span>YUVA NGO Portal</span>
+    </div>
+    <div class="topbar-spacer"></div>
+    <div class="topbar-actions">
+      <button class="pill-btn danger" onclick="confirmStop()">⏹ Stop Session</button>
+      <div class="topbar-user">
+        <div class="user-avatar" id="uAvatar">?</div>
+        <span id="uName">…</span>
+      </div>
+      <button class="pill-btn ghost" onclick="doLogout()">Sign Out</button>
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <div class="hero-strip">
+    <div class="hero-strip-inner">
+      <div class="hero-text">
+        <div class="hero-eyebrow" id="hero-greet">Welcome back</div>
+        <div class="hero-title">Every Rupee<br><em>Creates a</em> Changemaker</div>
+        <div class="hero-subtitle">Track donations, send gratitude, and measure your impact — all in one place.</div>
+      </div>
+      <div class="hero-quick-stats">
+        <div class="hqs-item">
+          <div class="hqs-value" id="hqs-total">₹0</div>
+          <div class="hqs-label">Total Raised</div>
+        </div>
+        <div class="hqs-item">
+          <div class="hqs-value" id="hqs-donors">—</div>
+          <div class="hqs-label">Donors</div>
+        </div>
+        <div class="hqs-item">
+          <div class="hqs-value" id="hqs-avg">—</div>
+          <div class="hqs-label">Avg Gift</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WA BANNER -->
+  <div class="wa-banner disconnected" id="waBanner">
+    <div class="wa-badge">📱</div>
+    <div class="wa-text">
+      <strong><span class="wa-dot-anim amber" id="waDot"></span><span id="waStatusTxt">WhatsApp not connected</span></strong>
+      <span id="waStatusSub">Click Connect to scan QR code and link your WhatsApp account</span>
+    </div>
+    <button class="wa-connect-btn" id="waConnectBtn" onclick="openQR()">Connect WhatsApp</button>
+  </div>
+
+  <!-- CANVAS -->
+  <div class="canvas">
+
+    <!-- SCHOOL TOOLBAR -->
+    <div class="school-toolbar">
+      <span class="toolbar-label">🏫 School</span>
+      <select class="school-select-styled" id="schoolSel" onchange="onSchoolChange()">
+        <option value="">— Select a school —</option>
+      </select>
+      <span class="selected-badge" id="selectedBadge" style="display:none;"></span>
+      <div class="new-school-row">
+        <input class="new-school-input" id="newSchoolInp" placeholder="New school name…">
+        <button class="btn-add-school" onclick="createSchool()">+ Add School</button>
+      </div>
+    </div>
+
+    <!-- STATS ROW -->
+    <div class="dashboard-grid" style="grid-template-columns:2fr 1fr 1fr; margin-bottom:18px;">
+      <div class="stat-card dark" style="animation-delay:0.05s;">
+        <div class="stat-accent">🌱</div>
+        <div class="stat-label" id="statSchoolLabel">Total Donations — All Schools</div>
+        <div class="stat-value" id="statTotal">₹0</div>
+        <div class="stat-footer">
+          <div class="live-indicator"><div class="live-dot"></div> Live tracking</div>
+        </div>
+      </div>
+      <div class="stat-card light" style="animation-delay:0.1s;">
+        <div class="stat-accent">👥</div>
+        <div class="stat-label">Total Donors</div>
+        <div class="stat-value" id="statDonors">—</div>
+        <div class="stat-footer">Unique entries</div>
+      </div>
+      <div class="stat-card light" style="animation-delay:0.15s;">
+        <div class="stat-accent">📊</div>
+        <div class="stat-label">Avg. Donation</div>
+        <div class="stat-value" id="statAvg">—</div>
+        <div class="stat-footer">Per donor</div>
+      </div>
+    </div>
+
+    <!-- CHART + BROADCAST -->
+    <div class="dashboard-grid" style="margin-bottom:18px;">
+      <!-- Chart -->
+      <div class="card span-2" style="animation-delay:0.2s;">
+        <div class="card-header">
+          <div class="card-icon ci-blue">📊</div>
+          <div class="card-title">Donation Trend</div>
+          <div class="toggle-row">
+            <button class="tgl-btn on" onclick="switchChart('monthly',this)">Monthly</button>
+            <button class="tgl-btn" onclick="switchChart('yearly',this)">Yearly</button>
+          </div>
+        </div>
+        <div class="chart-wrap"><canvas id="donChart"></canvas></div>
+      </div>
+
+      <!-- Broadcast -->
+      <div class="card" style="animation-delay:0.25s;">
+        <div class="card-header">
+          <div class="card-icon ci-green">📢</div>
+          <div class="card-title">Broadcast</div>
+          <div class="card-badge cb-green"><span style="width:6px;height:6px;border-radius:50%;background:#22C55E;display:inline-block;"></span> WhatsApp</div>
+        </div>
+        <div class="field-group">
+          <label class="field-label">Selected School</label>
+          <select id="broadcastSchoolDisp" disabled style="margin-bottom:0;">
+            <option>— Select a school above —</option>
+          </select>
+        </div>
+        <div class="field-group" style="margin-top:12px;">
+          <label class="field-label">Message</label>
+          <textarea id="broadcastMsg" placeholder="Type your message to all donors in this school…"></textarea>
+        </div>
+        <button class="submit-btn sb-green" onclick="sendBroadcast()" id="broadcastBtn">📢 Send to All Donors</button>
+      </div>
+    </div>
+
+    <!-- ADD DONATION FORM -->
+    <div class="card span-3" style="animation-delay:0.3s;">
+      <div class="card-header">
+        <div class="card-icon ci-saffron">➕</div>
+        <div class="card-title">Add New Donation Entry</div>
+        <div class="card-badge" style="background:#FFF7ED; color:var(--saffron); margin-left:auto;">
+          Sends WhatsApp Thank-You Automatically
+        </div>
+      </div>
+
+      <div class="progress-bar-wrap" id="progWrap">
+        <div class="progress-bar-fill" id="progFill"></div>
+      </div>
+
+      <div class="section-sep">School</div>
+      <div class="field-group">
+        <label class="field-label">Adding entry to</label>
+        <select id="entrySchoolDisp" disabled style="margin-bottom:0;"><option>— Select a school above —</option></select>
+      </div>
+
+      <div class="section-sep" style="margin-top:6px;">Student Details</div>
+      <div class="input-row">
+        <div class="field-group"><label class="field-label">Student Name</label><input type="text" id="f_student" placeholder="Full name of student"></div>
+        <div class="field-group"><label class="field-label">Class / Grade</label><input type="text" id="f_class" placeholder="e.g. Grade 5"></div>
+        <div class="field-group"><label class="field-label">School Name</label><input type="text" id="f_school" placeholder="School name"></div>
+        <div class="field-group"><label class="field-label">Parent / Guardian Name</label><input type="text" id="f_parent" placeholder="Parent full name"></div>
+      </div>
+
+      <div class="section-sep">Contact & Donation</div>
+      <div class="input-row">
+        <div class="field-group"><label class="field-label">Phone Number</label><input type="tel" id="f_phone" placeholder="+91 XXXXX XXXXX"></div>
+        <div class="field-group"><label class="field-label">Donation Amount (₹)</label><input type="number" id="f_amount" placeholder="e.g. 500" min="1"></div>
+        <div class="field-group full-col"><label class="field-label">Donation Date</label><input type="date" id="f_date"></div>
+      </div>
+
+      <button class="submit-btn sb-saffron" id="submitBtn" onclick="addDonation()">✅ Submit & Send Thank-You via WhatsApp</button>
+    </div>
+
+    <!-- RECENT DONATIONS TABLE -->
+    <div class="card span-3" id="recentCard" style="animation-delay:0.35s; display:none;">
+      <div class="card-header">
+        <div class="card-icon ci-purple">📋</div>
+        <div class="card-title">Recent Donations</div>
+        <button onclick="loadRecent()" style="margin-left:auto; background:var(--input-bg); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:0.76rem; font-family:'Plus Jakarta Sans',sans-serif; color:var(--muted); cursor:pointer; transition:all 0.2s;" onmouseover="this.style.background='#eee'" onmouseout="this.style.background='var(--input-bg)'">↻ Refresh</button>
+      </div>
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Student</th>
+              <th>Parent</th>
+              <th>Class</th>
+              <th>Amount</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody id="recentTbody">
+            <tr><td colspan="6" class="empty-state">Select a school to view recent donations</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div><!-- /canvas -->
+</div><!-- /dashboard -->
+
+<!-- ═══ QR MODAL ═══ -->
+<div class="modal-overlay" id="qrModal">
+  <div class="modal-box">
+    <h3>📱 Connect WhatsApp</h3>
+    <p>Scan this QR code with your WhatsApp to link your account</p>
+    <div id="qrContent">
+      <div class="qr-loading"><div class="spin"></div>Loading QR code…</div>
+    </div>
+    <div class="qr-steps">
+      <p>
+        <b>Step 1:</b> Open WhatsApp on your phone<br>
+        <b>Step 2:</b> Tap ⋮ Menu → Linked Devices<br>
+        <b>Step 3:</b> Tap "Link a Device"<br>
+        <b>Step 4:</b> Scan this QR code
+      </p>
+    </div>
+    <button class="qr-close-btn" onclick="closeQR()">Close</button>
+  </div>
+</div>
+
+<!-- ═══ STOP CONFIRM MODAL ═══ -->
+<div class="modal-overlay" id="stopModal">
+  <div class="modal-box">
+    <h3>⏹ Stop Session?</h3>
+    <p>This will stop all background processes and disconnect WhatsApp. You'll need to reconnect next time.</p>
+    <div class="modal-actions">
+      <button class="modal-btn mb-cancel" onclick="closeStop()">Cancel</button>
+      <button class="modal-btn mb-danger" onclick="doStop()">Yes, Stop</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ── Config ─────────────────────────────────────────────────────────────────
+const API = "http://127.0.0.1:8000";
+let token = localStorage.getItem("ngo_token") || "";
+let currentUser = "";
+let activeSchool = "";
+let donChart = null;
+let chartMode = "monthly";
+let isBusy = false;
+let qrPoll = null;
+let waPoll = null;
+
+// ── Helpers ────────────────────────────────────────────────────────────────
+function hdrs() { return { "Content-Type": "application/json", "X-Auth-Token": token }; }
+
+function toast(msg, type = "success") {
+  const el = document.getElementById("toast");
+  el.textContent = msg;
+  el.className = `toast ${type} show`;
+  setTimeout(() => el.classList.remove("show"), 3400);
+}
+
+function setProgress(pct) {
+  const wrap = document.getElementById("progWrap");
+  const fill = document.getElementById("progFill");
+  wrap.style.display = pct > 0 ? "block" : "none";
+  fill.style.width = pct + "%";
+}
+
+// ── Auth ───────────────────────────────────────────────────────────────────
+function switchTab(tab) {
+  document.getElementById("auth-error").style.display = "none";
+  document.querySelectorAll(".auth-tab").forEach((b, i) => {
+    b.classList.toggle("active", (tab === "login" && i === 0) || (tab === "register" && i === 1));
+  });
+  document.getElementById("login-form").style.display = tab === "login" ? "block" : "none";
+  document.getElementById("register-form").style.display = tab === "register" ? "block" : "none";
+}
+
+function showAuthErr(msg) {
+  const el = document.getElementById("auth-error");
+  el.textContent = "⚠ " + msg;
+  el.style.display = "block";
+}
+
+async function doLogin() {
+  const u = document.getElementById("login-user").value.trim();
+  const p = document.getElementById("login-pass").value;
+  if (!u || !p) { showAuthErr("Please enter username and password."); return; }
+  const btn = document.getElementById("login-btn");
+  btn.disabled = true; btn.textContent = "Signing in…";
+  try {
+    const r = await fetch(`${API}/auth/login`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ username: u, password: p }) });
+    const d = await r.json();
+    if (d.status === "success") { token = d.token; localStorage.setItem("ngo_token", token); enterDash(d.full_name || d.username); }
+    else showAuthErr(d.message || "Login failed.");
+  } catch { showAuthErr("Cannot connect to server."); }
+  btn.disabled = false; btn.textContent = "Sign In →";
+}
+
+async function doRegister() {
+  const n = document.getElementById("reg-name").value.trim();
+  const u = document.getElementById("reg-user").value.trim();
+  const p = document.getElementById("reg-pass").value;
+  if (!n || !u || !p) { showAuthErr("Please fill all fields."); return; }
+  const btn = document.getElementById("register-btn");
+  btn.disabled = true; btn.textContent = "Creating…";
+  try {
+    const r = await fetch(`${API}/auth/register`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ full_name: n, username: u, password: p }) });
+    const d = await r.json();
+    if (d.status === "success") { token = d.token; localStorage.setItem("ngo_token", token); enterDash(d.full_name || d.username); }
+    else showAuthErr(d.message || "Registration failed.");
+  } catch { showAuthErr("Cannot connect to server."); }
+  btn.disabled = false; btn.textContent = "Create Account →";
+}
+
+// ── Dashboard ──────────────────────────────────────────────────────────────
+function enterDash(name) {
+  currentUser = name;
+  document.getElementById("auth-screen").style.display = "none";
+  document.getElementById("dashboard").style.display = "block";
+  const ini = name.split(" ").map(w => w[0]).join("").toUpperCase().slice(0,2);
+  document.getElementById("uAvatar").textContent = ini;
+  document.getElementById("uName").textContent = name;
+  document.getElementById("hero-greet").textContent = `Welcome, ${name.split(" ")[0]} 👋`;
+  document.getElementById("f_date").valueAsDate = new Date();
+  loadSchools();
+  loadStats();
+  startWAPoll();
+  setInterval(loadStats, 30000);
+}
+
+async function doLogout() {
+  try { await fetch(`${API}/auth/logout`, { method: "POST", headers: hdrs() }); } catch {}
+  localStorage.removeItem("ngo_token");
+  token = "";
+  clearInterval(waPoll); clearInterval(qrPoll);
+  document.getElementById("dashboard").style.display = "none";
+  document.getElementById("auth-screen").style.display = "flex";
+}
+
+// ── WA ─────────────────────────────────────────────────────────────────────
+function startWAPoll() { checkWA(); waPoll = setInterval(checkWA, 9000); }
+
+async function checkWA() {
+  if (!token) return;
+  try {
+    const r = await fetch(`${API}/whatsapp-status`, { headers: hdrs() });
+    if (r.status === 401) { doLogout(); return; }
+    const d = await r.json();
+    updateWAUI(d.ready);
+  } catch { updateWAUI(false); }
+}
+
+function updateWAUI(ready) {
+  const banner = document.getElementById("waBanner");
+  const dot = document.getElementById("waDot");
+  const txt = document.getElementById("waStatusTxt");
+  const sub = document.getElementById("waStatusSub");
+  const btn = document.getElementById("waConnectBtn");
+  if (ready) {
+    banner.className = "wa-banner connected";
+    dot.className = "wa-dot-anim green";
+    txt.textContent = "WhatsApp Connected";
+    sub.textContent = "Ready to send thank-you messages and broadcasts";
+    btn.textContent = "✅ Connected";
+    btn.style.background = "linear-gradient(135deg,#15803D,#22C55E)";
+    btn.onclick = null;
+  } else {
+    banner.className = "wa-banner disconnected";
+    dot.className = "wa-dot-anim amber";
+    txt.textContent = "WhatsApp not connected";
+    sub.textContent = "Click Connect to scan QR code and link your WhatsApp account";
+    btn.textContent = "Connect WhatsApp";
+    btn.style.background = "";
+    btn.onclick = openQR;
+  }
+}
+
+async function openQR() {
+  document.getElementById("qrModal").classList.add("open");
+  await loadQR();
+  qrPoll = setInterval(async () => {
+    try {
+      const r = await fetch(`${API}/whatsapp-qr`, { headers: hdrs() });
+      const d = await r.json();
+      if (d.ready) { clearInterval(qrPoll); closeQR(); updateWAUI(true); toast("✅ WhatsApp connected!"); }
+      else if (d.qr) document.getElementById("qrContent").innerHTML = `<div class="qr-image-wrap"><img src="${d.qr}" alt="QR"></div>`;
+    } catch {}
+  }, 5000);
+}
+
+function closeQR() {
+  document.getElementById("qrModal").classList.remove("open");
+  clearInterval(qrPoll);
+}
+
+async function loadQR() {
+  document.getElementById("qrContent").innerHTML = `<div class="qr-loading"><div class="spin"></div>Loading QR from WhatsApp service…</div>`;
+  try {
+    const r = await fetch(`${API}/whatsapp-qr`, { headers: hdrs() });
+    const d = await r.json();
+    if (d.ready) { document.getElementById("qrContent").innerHTML = `<div style="padding:28px;color:rgba(255,255,255,0.45);font-size:0.85rem;"><div style="font-size:2rem;margin-bottom:10px;">✅</div>Already connected!</div>`; }
+    else if (d.qr) document.getElementById("qrContent").innerHTML = `<div class="qr-image-wrap"><img src="${d.qr}" alt="QR"></div>`;
+    else document.getElementById("qrContent").innerHTML = `<div class="qr-loading"><div class="spin"></div>${d.message || "Waiting for QR code…"}</div>`;
+  } catch {
+    document.getElementById("qrContent").innerHTML = `<div class="qr-loading" style="color:rgba(252,165,165,0.8);">❌ Cannot reach WhatsApp service.<br><small style="font-size:0.73rem;margin-top:8px;display:block;">Run: cd whatsapp-service && node index.js</small></div>`;
+  }
+}
+
+// ── Stop session ───────────────────────────────────────────────────────────
+function confirmStop() { document.getElementById("stopModal").classList.add("open"); }
+function closeStop() { document.getElementById("stopModal").classList.remove("open"); }
+
+async function doStop() {
+  closeStop();
+  try { await fetch(`${API}/session/stop`, { method: "POST", headers: hdrs() }); toast("Session stopped."); } catch {}
+  await doLogout();
+}
+
+// ── Schools ────────────────────────────────────────────────────────────────
+async function loadSchools() {
+  try {
+    const r = await fetch(`${API}/schools`, { headers: hdrs() });
+    if (r.status === 401) { doLogout(); return; }
+    const d = await r.json();
+    const sel = document.getElementById("schoolSel");
+    sel.innerHTML = '<option value="">— Select a school —</option>';
+    d.schools.forEach(s => { const o = document.createElement("option"); o.value = s; o.textContent = s; sel.appendChild(o); });
+  } catch {}
+}
+
+function onSchoolChange() {
+  activeSchool = document.getElementById("schoolSel").value;
+  const badge = document.getElementById("selectedBadge");
+  badge.style.display = activeSchool ? "inline-flex" : "none";
+  if (activeSchool) badge.textContent = "📋 " + activeSchool;
+
+  const bsd = document.getElementById("broadcastSchoolDisp");
+  bsd.innerHTML = activeSchool ? `<option>${activeSchool}</option>` : `<option>— Select a school above —</option>`;
+  const esd = document.getElementById("entrySchoolDisp");
+  esd.innerHTML = activeSchool ? `<option>${activeSchool}</option>` : `<option>— Select a school above —</option>`;
+  if (activeSchool) document.getElementById("f_school").value = activeSchool;
+
+  document.getElementById("statSchoolLabel").textContent = activeSchool ? `Total Donations — ${activeSchool}` : "Total Donations — All Schools";
+  document.getElementById("recentCard").style.display = activeSchool ? "block" : "none";
+  loadStats();
+  if (activeSchool) loadRecent();
+}
+
+async function createSchool() {
+  const name = document.getElementById("newSchoolInp").value.trim();
+  if (!name) { toast("Please enter a school name.", "error"); return; }
+  try {
+    const r = await fetch(`${API}/schools/create`, { method: "POST", headers: hdrs(), body: JSON.stringify({ school_name: name }) });
+    const d = await r.json();
+    if (d.status === "created") {
+      toast("✅ " + d.message);
+      document.getElementById("newSchoolInp").value = "";
+      await loadSchools();
+      document.getElementById("schoolSel").value = name;
+      onSchoolChange();
+    } else toast("⚠ " + d.message, "error");
+  } catch { toast("❌ Error creating school.", "error"); }
+}
+
+// ── Stats ──────────────────────────────────────────────────────────────────
+async function loadStats() {
+  try {
+    const url = activeSchool ? `${API}/donation-stats?school=${encodeURIComponent(activeSchool)}` : `${API}/donation-stats`;
+    const r = await fetch(url, { headers: hdrs() });
+    const d = await r.json();
+
+    const urlT = activeSchool ? `${API}/total-donation?school=${encodeURIComponent(activeSchool)}` : `${API}/total-donation`;
+    const rt = await fetch(urlT, { headers: hdrs() });
+    const dt = await rt.json();
+
+    const total = "₹" + (dt.total || 0).toLocaleString("en-IN");
+    document.getElementById("statTotal").textContent = total;
+    document.getElementById("hqs-total").textContent = total;
+    document.getElementById("statDonors").textContent = d.total_donors ?? "—";
+    document.getElementById("hqs-donors").textContent = d.total_donors ?? "—";
+    const avg = d.avg_donation ? "₹" + Math.round(d.avg_donation) : "—";
+    document.getElementById("statAvg").textContent = avg;
+    document.getElementById("hqs-avg").textContent = avg;
+    renderChart(d);
+  } catch { renderChart(null); }
+}
+
+function renderChart(data) {
+  const ctx = document.getElementById("donChart").getContext("2d");
+  let labels, values;
+  if (data && chartMode === "monthly" && data.monthly?.length > 0) {
+    labels = data.monthly.map(d => d.label); values = data.monthly.map(d => d.amount);
+  } else if (data && chartMode === "yearly" && data.yearly?.length > 0) {
+    labels = data.yearly.map(d => d.label); values = data.yearly.map(d => d.amount);
+  } else { labels = ["No data yet"]; values = [0]; }
+
+  if (donChart) donChart.destroy();
+  donChart = new Chart(ctx, {
+    type: "bar",
+    data: {
+      labels,
+      datasets: [{
+        label: "Donations (₹)", data: values,
+        backgroundColor: "rgba(232,101,26,0.12)", borderColor: "#E8651A",
+        borderWidth: 2, borderRadius: 7, borderSkipped: false
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => "₹" + c.parsed.y.toLocaleString("en-IN") } } },
+      scales: {
+        x: { grid: { display: false }, ticks: { font: { family: "Plus Jakarta Sans", size: 11 }, color: "#8A7B6E" } },
+        y: { grid: { color: "rgba(0,0,0,0.04)" }, beginAtZero: true, ticks: { font: { family: "Plus Jakarta Sans", size: 11 }, color: "#8A7B6E", callback: v => "₹" + v.toLocaleString("en-IN") } }
+      }
+    }
+  });
+}
+
+function switchChart(mode, btn) {
+  chartMode = mode;
+  document.querySelectorAll(".tgl-btn").forEach(b => b.classList.remove("on"));
+  btn.classList.add("on");
+  loadStats();
+}
+
+// ── Recent donations ───────────────────────────────────────────────────────
+async function loadRecent() {
+  if (!activeSchool) return;
+  try {
+    const r = await fetch(`${API}/recent-donations?school=${encodeURIComponent(activeSchool)}&limit=10`, { headers: hdrs() });
+    if (!r.ok) return;
+    const d = await r.json();
+    const tbody = document.getElementById("recentTbody");
+    if (!d.rows || d.rows.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="6" class="empty-state">No donations recorded yet for this school.</td></tr>`;
+      return;
+    }
+    tbody.innerHTML = d.rows.map((row, i) => `
+      <tr>
+        <td style="color:var(--muted);font-size:0.75rem;">${i+1}</td>
+        <td><strong>${row.student_name || "—"}</strong></td>
+        <td>${row.parent_name || "—"}</td>
+        <td>${row.class || "—"}</td>
+        <td><span class="amount-chip">₹${Number(row.amount||0).toLocaleString("en-IN")}</span></td>
+        <td style="color:var(--muted);">${row.date || "—"}</td>
+      </tr>
+    `).join("");
+  } catch {}
+}
+
+// ── Broadcast ──────────────────────────────────────────────────────────────
+async function sendBroadcast() {
+  if (isBusy) { toast("Already sending, please wait.", "error"); return; }
+  if (!activeSchool) { toast("⚠ Please select a school first.", "error"); return; }
+  const msg = document.getElementById("broadcastMsg").value.trim();
+  if (!msg) { toast("Please type a message.", "error"); return; }
+  isBusy = true;
+  const btn = document.getElementById("broadcastBtn");
+  btn.disabled = true; btn.textContent = "⏳ Sending…";
+  try {
+    const r = await fetch(`${API}/send-broadcast`, { method: "POST", headers: hdrs(), body: JSON.stringify({ message: msg, school: activeSchool }) });
+    const d = await r.json();
+    toast(d.status, d.status.includes("✅") ? "success" : "error");
+    document.getElementById("broadcastMsg").value = "";
+  } catch { toast("❌ Error sending broadcast.", "error"); }
+  btn.disabled = false; btn.textContent = "📢 Send to All Donors";
+  isBusy = false;
+}
+
+// ── Add Donation ───────────────────────────────────────────────────────────
+async function addDonation() {
+  if (!activeSchool) { toast("⚠ Please select a school first.", "error"); return; }
+  const required = ["f_student","f_class","f_school","f_parent","f_phone","f_amount"];
+  for (const id of required) {
+    if (!document.getElementById(id).value.trim()) {
+      toast("⚠ Please fill in all required fields.", "error"); return;
+    }
+  }
+  const amount = document.getElementById("f_amount").value;
+  if (isNaN(amount) || Number(amount) <= 0) { toast("⚠ Please enter a valid amount.", "error"); return; }
+
+  const btn = document.getElementById("submitBtn");
+  btn.disabled = true; btn.textContent = "⏳ Submitting…";
+  setProgress(30);
+
+  try {
+    setProgress(60);
+    const r = await fetch(`${API}/add-donation`, {
+      method: "POST", headers: hdrs(),
+      body: JSON.stringify({
+        school_file: activeSchool,
+        student_name: document.getElementById("f_student").value.trim(),
+        class: document.getElementById("f_class").value.trim(),
+        school: document.getElementById("f_school").value.trim(),
+        parent_name: document.getElementById("f_parent").value.trim(),
+        phone: document.getElementById("f_phone").value.trim(),
+        amount: document.getElementById("f_amount").value.trim(),
+        donation_date: document.getElementById("f_date").value
+      })
+    });
+    setProgress(100);
+    const d = await r.json();
+    toast("✅ " + d.status);
+    ["f_student","f_class","f_parent","f_phone","f_amount","f_date"].forEach(id => { document.getElementById(id).value = ""; });
+    document.getElementById("f_school").value = activeSchool;
+    document.getElementById("f_date").valueAsDate = new Date();
+    setTimeout(() => setProgress(0), 600);
+    loadStats();
+    if (activeSchool) loadRecent();
+  } catch {
+    toast("❌ Error adding donation.", "error");
+    setProgress(0);
+  }
+  btn.disabled = false; btn.textContent = "✅ Submit & Send Thank-You via WhatsApp";
+}
+
+// ── Enter key ──────────────────────────────────────────────────────────────
+document.addEventListener("keydown", e => {
+  if (e.key !== "Enter") return;
+  if (document.getElementById("login-form").style.display !== "none" && document.getElementById("auth-screen").style.display !== "none") doLogin();
+  else if (document.getElementById("register-form").style.display !== "none" && document.getElementById("auth-screen").style.display !== "none") doRegister();
+});
+
+// ── Auto-login ─────────────────────────────────────────────────────────────
+(async () => {
+  if (!token) return;
+  try {
+    const r = await fetch(`${API}/auth/me`, { headers: hdrs() });
+    if (r.ok) { const d = await r.json(); enterDash(d.full_name || d.username); }
+    else { localStorage.removeItem("ngo_token"); token = ""; }
+  } catch {}
+})();
+</script>
+</body>
+</html>
